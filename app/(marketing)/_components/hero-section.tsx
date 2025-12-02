@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
+import {RegisterLink, LoginLink, LogoutLink} from "@kinde-oss/kinde-auth-nextjs/components";
+
 import logo from '@/public/logo.svg'
 import Link from 'next/link'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 
@@ -14,6 +16,7 @@ import neon from '@/public/companies/neon.png'
 import orpc from '@/public/companies/orpc.webp'
 import vercel from '@/public/companies/vercel.svg'
 import prisma from '@/public/companies/prisma.svg'
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 const menuItems = [
     { name: 'Features', href: '#' },
@@ -24,6 +27,8 @@ const menuItems = [
 
 export default function HeroSection() {
     const [menuState, setMenuState] = useState(false)
+    const { getUser, isLoading} = useKindeBrowserClient()
+    const user = getUser()
     return (
         <>
             <header>
@@ -67,25 +72,34 @@ export default function HeroSection() {
                                         ))}
                                     </ul>
                                 </div>
+                                
 
-                                <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit lg:border-l lg:pl-6">
-                                    <Button
-                                        asChild
-                                        variant="outline"
-                                        size="sm">
-                                        <Link href="#">
-                                            <span>Login</span>
+                                {isLoading ? null : (
+                                    <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit lg:border-l lg:pl-6">
+                                    {user ? (
+                                        <>
+                                        <Link className={buttonVariants({ variant: "default", size: "sm" })} href="/dashboard">
+                                            <span>Dashboard</span>
                                         </Link>
-                                    </Button>
-                                    <Button
-                                        asChild
-                                        variant="default"
-                                        size="sm">
-                                        <Link href="#">
-                                            <span>Sign Up</span>
-                                        </Link>
-                                    </Button>
+
+                                        <LogoutLink className={buttonVariants({ variant: "outline", size: "sm" })}>
+                                            Logout
+                                        </LogoutLink>
+                                        </>
+                                    ) : (
+                                        <>
+                                        <LoginLink className={buttonVariants({ variant: "outline", size: "sm" })}>
+                                            Login
+                                        </LoginLink>
+        
+                                        <RegisterLink className={buttonVariants({ variant: "default", size: "sm" })}>
+                                            Sign Up
+                                        </RegisterLink>
+                                        </>
+                                    )}
                                 </div>
+                                )}
+                                
                             </div>
                         </div>
                     </div>
